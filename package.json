@@ -1,8 +1,8 @@
 {
-  "name": "my-qwik-empty-starter",
+  "name": "qwik-ssg-csr-only",
   "description": "App with Routing built-in ready to create your app",
   "engines": {
-    "node": "^18.17.0 || ^20.3.0 || >=21.0.0"
+    "node": "^20.3.0 || >=21.0.0"
   },
   "engines-annotation": "Mostly required by sharp which needs a Node-API v9 compatible runtime",
   "private": true,
