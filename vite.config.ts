@@ -19,6 +19,7 @@ const { dependencies = {}, devDependencies = {} } = pkg as any as {
  */
 export default defineConfig(({ command, mode }): UserConfig => {
   return {
+    clearScreen: false,
     plugins: [
       qwikCity(),
       qwikVite(),

@@ -22,6 +22,9 @@ module.exports = {
   },
   plugins: ["@typescript-eslint"],
   rules: {
+    "qwik/no-use-visible-task": ["off"],
+    // 'qwik/no-use-visible-task': ['warn'],
+    "qwik/valid-lexical-scope": ["warn"],
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-inferrable-types": "off",

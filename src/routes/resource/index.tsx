@@ -3,27 +3,19 @@ import {
   component$,
   useResource$,
   useSignal,
-  useStore,
   useVisibleTask$,
 } from "@builder.io/qwik";
-import type { DocumentHead } from "@builder.io/qwik-city";
+import { useLocation, useNavigate } from "@builder.io/qwik-city";
 
-export const head: DocumentHead = {
-  title: "Welcome to Qwik",
-  meta: [
-    {
-      name: "description",
-      content: "Qwik site description",
-    },
-  ],
-};
-
-export const Todo = component$(() => {
+export default component$(() => {
   const csr = useSignal(false);
+  const loc = useLocation();
+  const nav = useNavigate();
+  const id = loc.url.searchParams.has("id")
+    ? Number(loc.url.searchParams.get("id"))
+    : 1;
 
-  const store = useStore({
-    id: 1,
-  });
+  const resourceId = useSignal(id);
 
   useVisibleTask$(() => {
     csr.value = true;
@@ -35,7 +27,8 @@ export const Todo = component$(() => {
       console.log("\nlog: ~~SSG~~\n");
       return;
     }
-    const id = track(() => store.id);
+    // runs on client
+    const id = track(resourceId);
     const abortController = new AbortController();
     cleanup(() => abortController.abort("cleanup"));
     const res = await fetch(
@@ -44,17 +37,29 @@ export const Todo = component$(() => {
         signal: abortController.signal,
       }
     );
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // fake delay
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
+    // can be error prone without try-catch
     const data = res.json();
     return data;
   });
 
   return (
     <div>
+      <div>
+        example with query param: <code>?={resourceId.value}</code>
+      </div>
       <input
         name="todo"
-        value={store.id}
-        onInput$={(ev: any) => (store.id = ev.target.value)}
+        value={resourceId.value}
+        onInput$={(ev: any) => {
+          const value = Number(ev.target.value);
+          if (value > 0) {
+            resourceId.value = value;
+            nav(`${loc.url.pathname}?id=${ev.target.value}`);
+          }
+        }}
       />
       <Resource
         value={todoResource}
@@ -69,27 +74,5 @@ export const Todo = component$(() => {
         }}
       />
     </div>
-  );
-});
-
-export const Child = component$(() => {
-  return (
-    <>
-      <div>
-        hi again
-        <Todo />
-      </div>
-    </>
-  );
-});
-
-export default component$(() => {
-  return (
-    <>
-      <div>
-        hi
-        <Child />
-      </div>
-    </>
   );
 });
